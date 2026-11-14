@@ -94,7 +94,7 @@ export default function TeacherClassesListPage() {
             </div>
           ) : filtered.length === 0 ? (
             <div className="col-span-full py-12 text-center text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">
-              No matching classes found. Click "Create Class" to schedule a session.
+              No matching classes found. Click &quot;Create Class&quot; to schedule a session.
             </div>
           ) : (
             filtered.map((c) => (

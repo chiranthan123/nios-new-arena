@@ -214,7 +214,7 @@ export class DataService {
 
     if (this.isBrowser()) {
       const stored = localStorage.getItem(STORAGE_KEYS.CUSTOM_STUDENTS);
-      let list: Student[] = stored ? JSON.parse(stored) : [];
+      const list: Student[] = stored ? JSON.parse(stored) : [];
       const index = list.findIndex((s) => s.id === id);
       if (index !== -1) {
         list[index] = { ...list[index], ...updates, updated_at: new Date().toISOString() };
@@ -350,7 +350,7 @@ export class DataService {
 
     if (this.isBrowser()) {
       const stored = localStorage.getItem(STORAGE_KEYS.CUSTOM_TEACHERS);
-      let list: Teacher[] = stored ? JSON.parse(stored) : [];
+      const list: Teacher[] = stored ? JSON.parse(stored) : [];
       const index = list.findIndex((t) => t.id === id);
       if (index !== -1) {
         list[index] = { ...list[index], ...updates, updated_at: new Date().toISOString() };
@@ -685,7 +685,7 @@ export class DataService {
     if (this.isBrowser()) {
       // Update local storage
       const storedAtt = localStorage.getItem(STORAGE_KEYS.CUSTOM_ATTENDANCE);
-      let attList: Attendance[] = storedAtt ? JSON.parse(storedAtt) : [];
+      const attList: Attendance[] = storedAtt ? JSON.parse(storedAtt) : [];
       const idx = attList.findIndex((a) => a.id === attendanceId);
       if (idx !== -1) {
         attList[idx].status = updatedStatus;

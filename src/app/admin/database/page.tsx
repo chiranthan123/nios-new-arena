@@ -79,6 +79,24 @@ export default function AdminDatabasePage() {
       result.attendanceError = err.message;
     }
 
+    try {
+      const { data, error } = await supabase.from("demo_settings").select("count").limit(1);
+      result.demo_settings = !error;
+      result.demo_settingsError = error ? error.message : "Active";
+    } catch (err: any) {
+      result.demo_settings = false;
+      result.demo_settingsError = err.message;
+    }
+
+    try {
+      const { data, error } = await supabase.from("demo_data_metadata").select("count").limit(1);
+      result.demo_data_metadata = !error;
+      result.demo_data_metadataError = error ? error.message : "Active";
+    } catch (err: any) {
+      result.demo_data_metadata = false;
+      result.demo_data_metadataError = err.message;
+    }
+
     setConnectionStatus(result);
     setTesting(false);
   };
@@ -312,6 +330,8 @@ CREATE POLICY "Allow authenticated read demo_settings" ON public.demo_settings F
               { name: "teachers", key: "teachers" },
               { name: "class_sessions", key: "class_sessions" },
               { name: "attendance", key: "attendance" },
+              { name: "demo_settings", key: "demo_settings" },
+              { name: "demo_data_metadata", key: "demo_data_metadata" },
             ].map((tbl) => {
               const isReady = connectionStatus ? connectionStatus[tbl.key] : false;
               return (

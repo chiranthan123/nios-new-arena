@@ -162,7 +162,20 @@ INSERT INTO public.demo_settings (id, is_demo_mode)
 VALUES (1, false)
 ON CONFLICT (id) DO NOTHING;
 
--- 13. SYSTEM ACTIVITY LOGS TABLE
+-- 13. DEMO DATA METADATA TABLE
+CREATE TABLE IF NOT EXISTS public.demo_data_metadata (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    dataset_version TEXT NOT NULL DEFAULT 'v1.0-nios',
+    total_students INTEGER NOT NULL DEFAULT 8,
+    total_teachers INTEGER NOT NULL DEFAULT 4,
+    total_classes INTEGER NOT NULL DEFAULT 8,
+    total_attendance INTEGER NOT NULL DEFAULT 24,
+    description TEXT DEFAULT 'Default realistic NIOS demonstration dataset for LiteraTrack',
+    seeded_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    is_demo BOOLEAN NOT NULL DEFAULT true
+);
+
+-- 14. SYSTEM ACTIVITY LOGS TABLE
 CREATE TABLE IF NOT EXISTS public.system_activity_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     actor_profile_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
@@ -235,6 +248,7 @@ ALTER TABLE public.class_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.attendance ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.attendance_audit_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.demo_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.demo_data_metadata ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.system_activity_logs ENABLE ROW LEVEL SECURITY;
 
 -- PROFILES POLICIES
@@ -385,6 +399,17 @@ CREATE POLICY "Only admins can update demo settings"
     ON public.demo_settings FOR UPDATE
     USING (public.is_admin())
     WITH CHECK (public.is_admin());
+
+-- DEMO DATA METADATA POLICIES
+DROP POLICY IF EXISTS "Anyone can read demo data metadata" ON public.demo_data_metadata;
+CREATE POLICY "Anyone can read demo data metadata"
+    ON public.demo_data_metadata FOR SELECT
+    USING (true);
+
+DROP POLICY IF EXISTS "Admins can manage demo data metadata" ON public.demo_data_metadata;
+CREATE POLICY "Admins can manage demo data metadata"
+    ON public.demo_data_metadata FOR ALL
+    USING (public.is_admin());
 
 -- SYSTEM ACTIVITY LOGS POLICIES
 DROP POLICY IF EXISTS "Admins can view system activity logs" ON public.system_activity_logs;
