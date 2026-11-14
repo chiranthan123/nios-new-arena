@@ -179,6 +179,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // If no active session, start with default demo admin
           const defaultAdmin = DEMO_USERS[0];
           localStorage.setItem("literatrack_active_user", JSON.stringify(defaultAdmin));
+          if (typeof document !== "undefined") {
+            document.cookie = `literatrack_role=${defaultAdmin.role}; path=/; max-age=86400; SameSite=Lax`;
+          }
           setCurrentRole(defaultAdmin.role);
           setProfile({
             id: defaultAdmin.id,
@@ -251,6 +254,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq("id", data.user.id)
         .single();
 
+      const userRole = prof?.role || (data.user.user_metadata?.role as UserRole) || "admin";
+      if (typeof document !== "undefined") {
+        document.cookie = `literatrack_role=${userRole}; path=/; max-age=86400; SameSite=Lax`;
+      }
+
       if (prof) {
         setProfile(prof);
         setCurrentRole(prof.role);
@@ -270,6 +278,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const switchDemoRole = async (roleOption: DemoUserOption) => {
     localStorage.setItem("literatrack_active_user", JSON.stringify(roleOption));
+    if (typeof document !== "undefined") {
+      document.cookie = `literatrack_role=${roleOption.role}; path=/; max-age=86400; SameSite=Lax`;
+    }
     setCurrentRole(roleOption.role);
     setProfile({
       id: roleOption.id,
@@ -295,6 +306,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     localStorage.removeItem("literatrack_active_user");
+    if (typeof document !== "undefined") {
+      document.cookie = "literatrack_role=; path=/; max-age=0; SameSite=Lax";
+    }
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
